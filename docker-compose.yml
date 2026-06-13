@@ -1,0 +1,25 @@
+services:
+  platform:
+    build: .
+    image: cybershield-platform:latest
+    container_name: cybershield-platform
+    ports:
+      - "8000:8000"
+    environment:
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      PLATFORM_LLM_MODEL: ${PLATFORM_LLM_MODEL:-claude-opus-4-8}
+      CVE_INTEL_START_YEAR: ${CVE_INTEL_START_YEAR:-2020}
+      CVE_INTEL_END_YEAR: ${CVE_INTEL_END_YEAR:-2024}
+    volumes:
+      - "${NVD_DIR:-./nvd-json-data-feeds-main}:/data/nvd:ro"
+      - cybershield-index:/data/index
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/healthz').getcode()==200 else 1)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 25s
+
+volumes:
+  cybershield-index:

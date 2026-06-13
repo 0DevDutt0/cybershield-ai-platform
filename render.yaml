@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: cybershield-platform
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: standard
+    healthCheckPath: /healthz
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: PLATFORM_PORT
+        value: "8000"
+      - key: CYBERSHIELD_MODEL_PATH
+        value: /app/models/model.joblib
+      - key: CYBERSHIELD_GLOSSARY_DIR
+        value: /app/cybersecurity_terms
+      - key: CVE_INTEL_NVD_DIR
+        value: /data/nvd
+      - key: CVE_INTEL_INDEX_DIR
+        value: /data/index
+      - key: CVE_INTEL_START_YEAR
+        value: "2020"
+      - key: CVE_INTEL_END_YEAR
+        value: "2024"
+    disk:
+      name: cybershield-data
+      mountPath: /data
+      sizeGB: 20

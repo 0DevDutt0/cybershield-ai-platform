@@ -1,0 +1,261 @@
+### CyberShield AI Platform — Demo API Requests
+### Works with the VS Code REST Client extension (humao.rest-client)
+### Start the server first: platform serve
+### Then click "Send Request" above any request block
+
+@baseUrl = http://localhost:8000
+
+# =============================================================================
+# PLATFORM HEALTH
+# =============================================================================
+
+### Platform-wide health check
+GET {{baseUrl}}/api/health
+
+###
+
+# =============================================================================
+# 1. URL SHIELD — Phishing Detection
+# =============================================================================
+
+### Analyse a suspicious URL (high risk expected)
+POST {{baseUrl}}/api/url/predict
+Content-Type: application/json
+
+{
+  "url": "http://paypal-secure-login.xyz/verify?token=abc123"
+}
+
+###
+
+### Analyse a legitimate URL (low risk expected)
+POST {{baseUrl}}/api/url/predict
+Content-Type: application/json
+
+{
+  "url": "https://github.com/login"
+}
+
+###
+
+### Analyse a URL with Claude explanation
+POST {{baseUrl}}/api/url/explain
+Content-Type: application/json
+
+{
+  "url": "http://192.168.1.1/admin/phishing-login.php"
+}
+
+###
+
+### Batch analyse multiple URLs at once
+POST {{baseUrl}}/api/url/predict/batch
+Content-Type: application/json
+
+{
+  "urls": [
+    "https://google.com",
+    "http://secure-paypal-update.tk/login",
+    "http://192.168.0.1/bank-verify",
+    "https://github.com/anthropics/anthropic-sdk-python",
+    "http://amaz0n-account-suspended.xyz/reactivate"
+  ]
+}
+
+###
+
+### Model info (accuracy, training date, feature count)
+GET {{baseUrl}}/api/url/model/info
+
+###
+
+# =============================================================================
+# 2. CVE INTELLIGENCE — Vulnerability Search
+# =============================================================================
+
+### Semantic CVE search — natural language query
+POST {{baseUrl}}/api/cve/search
+Content-Type: application/json
+
+{
+  "query": "remote code execution in Apache web servers",
+  "k": 5
+}
+
+###
+
+### Search with severity filter
+POST {{baseUrl}}/api/cve/search
+Content-Type: application/json
+
+{
+  "query": "SQL injection authentication bypass",
+  "k": 5,
+  "severity": ["CRITICAL", "HIGH"],
+  "start_year": 2021,
+  "end_year": 2023
+}
+
+###
+
+### Search with CVSS score filter
+POST {{baseUrl}}/api/cve/search
+Content-Type: application/json
+
+{
+  "query": "privilege escalation Windows kernel",
+  "k": 8,
+  "min_cvss": 8.0,
+  "attack_vector": "LOCAL"
+}
+
+###
+
+### Ask Claude a question grounded in CVE data
+POST {{baseUrl}}/api/cve/ask
+Content-Type: application/json
+
+{
+  "question": "What are the most critical vulnerabilities in Log4j and how can I detect them?",
+  "k": 5
+}
+
+###
+
+### Look up a specific CVE by ID
+GET {{baseUrl}}/api/cve/CVE-2021-44228
+
+###
+
+### CVE index statistics
+GET {{baseUrl}}/api/cve/stats
+
+###
+
+# =============================================================================
+# 3. THREAT INTELLIGENCE — Narratives & Playbooks
+# =============================================================================
+
+### Generate a threat narrative for Log4Shell
+POST {{baseUrl}}/api/threat/narrative
+Content-Type: application/json
+
+{
+  "cve_id": "CVE-2021-44228"
+}
+
+###
+
+### Generate a threat narrative from a free-text description
+POST {{baseUrl}}/api/threat/narrative
+Content-Type: application/json
+
+{
+  "description": "unauthenticated remote code execution in a Java logging library allowing arbitrary LDAP lookups"
+}
+
+###
+
+### Generate an incident response playbook for Log4Shell
+POST {{baseUrl}}/api/threat/playbook
+Content-Type: application/json
+
+{
+  "cve_ids": ["CVE-2021-44228"],
+  "organization_context": "mid-size e-commerce company, 5-person SOC, running Java microservices on AWS"
+}
+
+###
+
+### Generate a playbook from a description (no CVE ID needed)
+POST {{baseUrl}}/api/threat/playbook
+Content-Type: application/json
+
+{
+  "threat_description": "Ransomware infection detected on Windows file servers, lateral movement observed",
+  "organization_context": "healthcare provider, strict HIPAA compliance requirements"
+}
+
+###
+
+### Generate a multi-CVE playbook
+POST {{baseUrl}}/api/threat/playbook
+Content-Type: application/json
+
+{
+  "cve_ids": ["CVE-2021-44228", "CVE-2022-0847", "CVE-2021-4034"],
+  "organization_context": "Linux-based infrastructure, Kubernetes cluster"
+}
+
+###
+
+# =============================================================================
+# 4. ASSET CORRELATION — CVE Matching
+# =============================================================================
+
+### Correlate a software inventory against CVE index
+POST {{baseUrl}}/api/assets/correlate
+Content-Type: application/json
+
+{
+  "assets": [
+    { "name": "Apache Log4j", "version": "2.14.1", "asset_type": "library" },
+    { "name": "Apache Tomcat", "version": "9.0.54", "asset_type": "web_server" },
+    { "name": "OpenSSL", "version": "1.1.1", "asset_type": "library" }
+  ],
+  "k_per_asset": 5,
+  "min_cvss": 7.0,
+  "summarize": true
+}
+
+###
+
+### Correlate with CISO summary (executive briefing)
+POST {{baseUrl}}/api/assets/correlate
+Content-Type: application/json
+
+{
+  "assets": [
+    { "name": "Spring Framework", "version": "5.3.0", "asset_type": "framework" },
+    { "name": "Jenkins", "version": "2.303", "asset_type": "ci_cd" },
+    { "name": "Nginx", "version": "1.18.0", "asset_type": "web_server" },
+    { "name": "PostgreSQL", "version": "13.4", "asset_type": "database" }
+  ],
+  "k_per_asset": 3,
+  "min_cvss": 6.0,
+  "summarize": true
+}
+
+###
+
+# =============================================================================
+# 5. RED TEAM — Adversarial URL Generation
+# =============================================================================
+# ⚠️  For authorized penetration testing and phishing simulation ONLY.
+# Always provide a valid authorization reference in "authorized_by".
+
+### Generate adversarial variants using all techniques
+POST {{baseUrl}}/api/redteam/generate
+Content-Type: application/json
+
+{
+  "legitimate_domain": "example.com",
+  "techniques": ["homoglyphs", "subdomain", "tld_swap", "typos", "encoding", "combo"],
+  "count_per_technique": 3,
+  "authorized_by": "Demo User / Internal Security Testing"
+}
+
+###
+
+### Generate only the highest-risk techniques
+POST {{baseUrl}}/api/redteam/generate
+Content-Type: application/json
+
+{
+  "legitimate_domain": "yourcompany.com",
+  "techniques": ["homoglyphs", "subdomain", "combo"],
+  "count_per_technique": 4,
+  "authorized_by": "Security Team / Phishing Simulation Q1-2025"
+}
+
+###

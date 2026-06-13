@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CyberShield AI Platform — Unified Security Intelligence</title>
+  <meta name="description" content="AI-powered unified security platform: phishing detection, CVE intelligence, threat narratives, asset correlation, and red-team tools." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>" />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <header class="nav">
+    <div class="brand">
+      <span class="brand-mark">🛡️</span>
+      <div>
+        <h1>CyberShield<span class="accent"> AI Platform</span></h1>
+        <p class="tagline">Unified AI-powered security intelligence</p>
+      </div>
+    </div>
+    <div class="nav-right">
+      <span id="status-pill" class="pill pill-muted">● connecting…</span>
+      <span id="index-size" class="pill pill-muted hidden"></span>
+      <a class="ghost-btn" href="/docs" target="_blank" rel="noopener">API Docs</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Tab navigation -->
+    <div class="tabs">
+      <button class="tab active" data-tab="url">🔗 URL Shield</button>
+      <button class="tab" data-tab="cve">🔍 CVE Intel</button>
+      <button class="tab" data-tab="threat">⚡ Threat Intel</button>
+      <button class="tab" data-tab="assets">📦 Assets</button>
+      <button class="tab" data-tab="redteam">🎯 Red Team</button>
+    </div>
+
+    <!-- ── URL SHIELD TAB ─────────────────────────────────────────────── -->
+    <section id="tab-url" class="tab-panel">
+      <div class="card analyzer">
+        <form id="url-form" autocomplete="off">
+          <div class="input-row">
+            <input id="url-input" type="text" inputmode="url" spellcheck="false"
+                   placeholder="http://paypal-secure-login.xyz/verify" aria-label="URL to analyse" />
+            <button id="url-analyze-btn" type="submit" class="primary-btn">Analyse</button>
+          </div>
+        </form>
+        <div class="examples">
+          <span>Try:</span>
+          <button class="url-chip" data-url="https://github.com/anthropics">github.com/anthropics</button>
+          <button class="url-chip" data-url="http://paypal-secure-login.xyz/verify-account">paypal-secure-login.xyz</button>
+          <button class="url-chip" data-url="http://192.168.0.1/login/bank/verify.php">192.168.0.1/login…</button>
+          <button class="url-chip" data-url="http://bit.ly/3xR9zQ">bit.ly/3xR9zQ</button>
+        </div>
+      </div>
+
+      <section id="url-result" class="card result hidden" aria-live="polite">
+        <div class="result-head">
+          <div class="gauge-wrap">
+            <svg class="gauge" viewBox="0 0 120 120" width="140" height="140">
+              <circle class="gauge-track" cx="60" cy="60" r="52" />
+              <circle id="gauge-arc" class="gauge-arc" cx="60" cy="60" r="52" />
+            </svg>
+            <div class="gauge-label">
+              <span id="gauge-score">0</span>
+              <small>/ 100</small>
+            </div>
+          </div>
+          <div class="verdict-block">
+            <span id="verdict-badge" class="verdict-badge">—</span>
+            <p id="verdict-url" class="verdict-url"></p>
+            <div class="meta-row">
+              <span>Phishing probability: <strong id="meta-prob">—</strong></span>
+              <span>Confidence: <strong id="meta-conf">—</strong></span>
+            </div>
+          </div>
+        </div>
+        <div class="signals">
+          <h3>Risk signals</h3>
+          <ul id="signals-list" class="signals-list"></ul>
+        </div>
+        <div class="explain">
+          <div class="explain-head">
+            <h3>Explanation</h3>
+            <span id="url-explain-source" class="pill pill-muted hidden"></span>
+          </div>
+          <p id="url-explain-text" class="explain-text">—</p>
+          <button id="url-explain-btn" class="ghost-btn small">Get AI explanation</button>
+        </div>
+      </section>
+
+      <section class="card batch">
+        <h3>Batch analysis</h3>
+        <p class="muted">Paste multiple URLs (one per line, up to 100).</p>
+        <textarea id="batch-input" rows="5" spellcheck="false"
+          placeholder="https://example.com&#10;http://free-gift-card.xyz/claim&#10;http://203.0.113.7/secure/login"></textarea>
+        <button id="batch-btn" class="primary-btn">Analyse all</button>
+        <div id="batch-summary" class="batch-summary hidden"></div>
+        <div class="table-wrap">
+          <table id="batch-table" class="batch-table hidden">
+            <thead><tr><th>URL</th><th>Verdict</th><th>Risk</th><th>Top signal</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+
+    <!-- ── CVE INTEL TAB ──────────────────────────────────────────────── -->
+    <section id="tab-cve" class="tab-panel hidden">
+      <div class="card search-card">
+        <form id="cve-search-form">
+          <div class="input-row">
+            <input id="cve-search-input" type="text" spellcheck="false"
+              placeholder="unauthenticated remote code execution in web servers…" />
+            <button type="submit" class="primary-btn" id="cve-search-btn">Search</button>
+          </div>
+        </form>
+        <div class="filters">
+          <div class="filter-group">
+            <label>Severity</label>
+            <div class="chip-row">
+              <button class="sev-chip" data-sev="CRITICAL">CRITICAL</button>
+              <button class="sev-chip" data-sev="HIGH">HIGH</button>
+              <button class="sev-chip" data-sev="MEDIUM">MEDIUM</button>
+              <button class="sev-chip" data-sev="LOW">LOW</button>
+            </div>
+          </div>
+          <div class="filter-group">
+            <label>Year</label>
+            <div class="year-row">
+              <input id="cve-year-from" type="number" placeholder="From" min="1999" max="2030" />
+              <span>–</span>
+              <input id="cve-year-to" type="number" placeholder="To" min="1999" max="2030" />
+            </div>
+          </div>
+          <div class="filter-group">
+            <label>Attack Vector</label>
+            <select id="cve-av-select">
+              <option value="">Any</option>
+              <option value="NETWORK">NETWORK</option>
+              <option value="ADJACENT">ADJACENT</option>
+              <option value="LOCAL">LOCAL</option>
+              <option value="PHYSICAL">PHYSICAL</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Min CVSS</label>
+            <input id="cve-min-cvss" type="number" placeholder="0–10" min="0" max="10" step="0.1" style="width:80px" />
+          </div>
+          <div class="filter-group">
+            <label>CWE</label>
+            <input id="cve-cwe-input" type="text" placeholder="e.g. CWE-79" style="width:120px" />
+          </div>
+        </div>
+        <div class="examples">
+          <span>Try:</span>
+          <button class="cve-chip" data-q="critical unauthenticated remote code execution">RCE (CRITICAL)</button>
+          <button class="cve-chip" data-q="SQL injection web application authentication bypass">SQL Injection</button>
+          <button class="cve-chip" data-q="Log4Shell Apache log4j deserialization">Log4Shell</button>
+          <button class="cve-chip" data-q="privilege escalation Windows kernel local">Win Priv Esc</button>
+        </div>
+      </div>
+      <div id="cve-search-results" class="results-area" aria-live="polite"></div>
+
+      <div class="tabs-inner">
+        <button class="tab-inner active" data-inner="search-panel">Search</button>
+        <button class="tab-inner" data-inner="ask-panel">Ask Claude</button>
+        <button class="tab-inner" data-inner="stats-panel">Stats</button>
+      </div>
+
+      <section id="ask-panel" class="inner-panel hidden">
+        <div class="card">
+          <h3>Ask about vulnerabilities</h3>
+          <p class="muted">Claude retrieves relevant CVEs and synthesises a cited answer.</p>
+          <textarea id="cve-ask-input" rows="3" placeholder="What are the most critical vulnerabilities in Apache web servers from 2021?"></textarea>
+          <div class="ask-options">
+            <label class="year-row">Years:
+              <input id="cve-ask-year-from" type="number" placeholder="From" min="1999" max="2030" />
+              <span>–</span>
+              <input id="cve-ask-year-to" type="number" placeholder="To" min="1999" max="2030" />
+            </label>
+            <label class="chip-row">Severity:
+              <button class="sev-chip ask-sev" data-sev="CRITICAL">CRITICAL</button>
+              <button class="sev-chip ask-sev" data-sev="HIGH">HIGH</button>
+            </label>
+          </div>
+          <button id="cve-ask-btn" class="primary-btn">Ask</button>
+          <div id="cve-ask-result" class="ask-result hidden" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section id="stats-panel" class="inner-panel hidden">
+        <div id="stats-content" class="stats-grid">
+          <div class="card stat-loading">Click "Stats" to load index statistics.</div>
+        </div>
+      </section>
+    </section>
+
+    <!-- ── THREAT INTEL TAB ───────────────────────────────────────────── -->
+    <section id="tab-threat" class="tab-panel hidden">
+      <div class="tabs-inner">
+        <button class="tab-inner active" data-inner="narrative-panel">Threat Narrative</button>
+        <button class="tab-inner" data-inner="playbook-panel">IR Playbook</button>
+      </div>
+
+      <section id="narrative-panel" class="inner-panel">
+        <div class="card">
+          <h3>Threat Narrative Generator</h3>
+          <p class="muted">Get a plain-English explanation of a CVE — attack surface, business impact, and affected software.</p>
+          <div class="input-stack">
+            <div class="form-field">
+              <label>CVE ID <span class="muted">(optional)</span></label>
+              <input id="narrative-cve-id" type="text" placeholder="CVE-2021-44228" spellcheck="false" />
+            </div>
+            <div class="form-field">
+              <label>Or describe the threat <span class="muted">(optional)</span></label>
+              <textarea id="narrative-desc" rows="2" placeholder="Log4j remote code execution via JNDI lookup…"></textarea>
+            </div>
+          </div>
+          <button id="narrative-btn" class="primary-btn">Generate Narrative</button>
+          <div id="narrative-result" class="narrative-result hidden" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section id="playbook-panel" class="inner-panel hidden">
+        <div class="card">
+          <h3>Incident Response Playbook</h3>
+          <p class="muted">AI-generated playbook covering Detection → Containment → Eradication → Recovery → Lessons Learned.</p>
+          <div class="input-stack">
+            <div class="form-field">
+              <label>CVE IDs <span class="muted">(comma-separated, optional)</span></label>
+              <input id="playbook-cves" type="text" placeholder="CVE-2021-44228, CVE-2022-0847" spellcheck="false" />
+            </div>
+            <div class="form-field">
+              <label>Or describe the threat <span class="muted">(optional)</span></label>
+              <textarea id="playbook-desc" rows="2" placeholder="Log4Shell exploitation detected on prod servers…"></textarea>
+            </div>
+            <div class="form-field">
+              <label>Organization context <span class="muted">(optional)</span></label>
+              <input id="playbook-org" type="text" placeholder="Mid-size healthcare org, SOC team of 3…" />
+            </div>
+          </div>
+          <button id="playbook-btn" class="primary-btn">Generate Playbook</button>
+          <div id="playbook-result" class="playbook-result hidden" aria-live="polite"></div>
+        </div>
+      </section>
+    </section>
+
+    <!-- ── ASSETS TAB ─────────────────────────────────────────────────── -->
+    <section id="tab-assets" class="tab-panel hidden">
+      <div class="card">
+        <h3>CVE-to-Asset Correlation</h3>
+        <p class="muted">Add your software assets to find matching CVEs in the index.</p>
+
+        <div id="asset-list" class="asset-list">
+          <div class="asset-row" data-idx="0">
+            <input class="asset-name" type="text" placeholder="Apache log4j" />
+            <input class="asset-version" type="text" placeholder="2.14.1" style="width:100px" />
+            <select class="asset-type">
+              <option value="">Type…</option>
+              <option value="library">library</option>
+              <option value="web_server">web server</option>
+              <option value="database">database</option>
+              <option value="os">OS</option>
+              <option value="framework">framework</option>
+              <option value="container">container</option>
+            </select>
+            <button class="remove-asset ghost-btn small" title="Remove">✕</button>
+          </div>
+        </div>
+        <button id="add-asset-btn" class="ghost-btn" style="margin-top:10px">+ Add asset</button>
+
+        <div class="asset-options">
+          <div class="filter-group">
+            <label>Results per asset</label>
+            <input id="asset-k" type="number" value="5" min="1" max="20" style="width:70px" />
+          </div>
+          <div class="filter-group">
+            <label>Min CVSS</label>
+            <input id="asset-min-cvss" type="number" placeholder="7.0" min="0" max="10" step="0.1" style="width:80px" />
+          </div>
+          <div class="filter-group">
+            <label>CISO summary</label>
+            <label class="toggle">
+              <input id="asset-summarize" type="checkbox" />
+              <span class="toggle-label">Generate with Claude</span>
+            </label>
+          </div>
+        </div>
+
+        <button id="correlate-btn" class="primary-btn" style="margin-top:14px">Correlate</button>
+        <div id="correlate-result" class="correlate-result hidden" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- ── RED TEAM TAB ───────────────────────────────────────────────── -->
+    <section id="tab-redteam" class="tab-panel hidden">
+      <div class="redteam-warning">
+        ⚠️ <strong>Authorized use only.</strong> This tool generates adversarial URLs for
+        phishing simulation and penetration testing. Use only against systems you own or
+        have written authorization to test. Misuse may violate computer fraud laws.
+      </div>
+
+      <div class="card">
+        <h3>Adversarial URL Generator</h3>
+        <p class="muted">Generates phishing domain variants using common deception techniques, with AI-powered explanations.</p>
+
+        <div class="input-stack">
+          <div class="form-field">
+            <label>Legitimate domain <span class="muted">(required)</span></label>
+            <input id="rt-domain" type="text" placeholder="example.com" spellcheck="false" />
+          </div>
+          <div class="form-field">
+            <label>Authorized by <span class="muted">(required — name or engagement ref)</span></label>
+            <input id="rt-authorized-by" type="text" placeholder="John Smith / PT-2024-042" />
+          </div>
+          <div class="form-field">
+            <label>Techniques</label>
+            <div class="technique-chips">
+              <label class="tech-chip"><input type="checkbox" value="homoglyphs" checked /> Homoglyphs</label>
+              <label class="tech-chip"><input type="checkbox" value="subdomain" checked /> Subdomain</label>
+              <label class="tech-chip"><input type="checkbox" value="encoding" checked /> Encoding</label>
+              <label class="tech-chip"><input type="checkbox" value="typos" checked /> Typos</label>
+              <label class="tech-chip"><input type="checkbox" value="tld_swap" checked /> TLD Swap</label>
+              <label class="tech-chip"><input type="checkbox" value="combo" checked /> Combo</label>
+            </div>
+          </div>
+          <div class="form-field">
+            <label>Variants per technique</label>
+            <input id="rt-count" type="number" value="3" min="1" max="10" style="width:70px" />
+          </div>
+        </div>
+
+        <button id="rt-generate-btn" class="primary-btn">Generate Variants</button>
+        <div id="rt-result" class="rt-result hidden" aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>
+      <strong>CyberShield AI Platform</strong> · scikit-learn · FAISS · sentence-transformers · Claude ·
+      <span class="muted">For authorized defensive &amp; security research use only.</span>
+    </p>
+  </footer>
+
+  <script src="/static/common.js"></script>
+  <script src="/static/tabs/url_shield.js"></script>
+  <script src="/static/tabs/cve_intel.js"></script>
+  <script src="/static/tabs/threat_intel.js"></script>
+  <script src="/static/tabs/assets.js"></script>
+  <script src="/static/tabs/redteam.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>

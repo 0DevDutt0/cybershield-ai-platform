@@ -1,0 +1,16 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+startCommand = "uvicorn platform_core.api.main:app --host 0.0.0.0 --port $PORT"
+healthcheckPath = "/healthz"
+healthcheckTimeout = 30
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+# Environment variables to set in the Railway dashboard:
+# ANTHROPIC_API_KEY  — required for LLM features
+# CVE_INTEL_NVD_DIR  — path to NVD data volume (Railway persistent volume)
+# CVE_INTEL_INDEX_DIR — path to FAISS index volume
+# CVE_INTEL_START_YEAR / CVE_INTEL_END_YEAR — year range to index
