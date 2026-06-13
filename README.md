@@ -693,7 +693,7 @@ MIT License — free to use, modify, and distribute.
 
 ⭐ **Star this repo** if you found it useful — it helps others discover it!
 
-[![GitHub stars](https://img.shields.io/github/stars/YOUR_USERNAME/cybershield-ai-platform?style=social)](https://github.com/YOUR_USERNAME/cybershield-ai-platform)
-[![GitHub forks](https://img.shields.io/github/forks/YOUR_USERNAME/cybershield-ai-platform?style=social)](https://github.com/YOUR_USERNAME/cybershield-ai-platform)
+[![GitHub stars](https://img.shields.io/github/stars/0DevDutt0/cybershield-ai-platform?style=social)](https://github.com/YOUR_USERNAME/cybershield-ai-platform)
+[![GitHub forks](https://img.shields.io/github/forks/0DevDutt0/cybershield-ai-platform?style=social)](https://github.com/YOUR_USERNAME/cybershield-ai-platform)
 
 </div>
